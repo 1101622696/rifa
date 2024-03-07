@@ -4,7 +4,6 @@ import { ref } from "vue";
 import Swal from 'sweetalert2';
 import  jsPDF  from "jspdf";
 import autoTable from 'jspdf-autotable'
-// import 'jspdf-autotable'
 
 
 let loteria = ref("");
@@ -23,7 +22,7 @@ let showBoletanopagada = ref(false)
 let showBoletapagada = ref(false)
 let showlistadoboletas = ref(false)
 let showPersonalizar = ref(false)
-let showtabla = ref(false)
+// let showtabla = ref(false)
 let Datospagada = ref([])
 let Datosnopagada = ref([])
 let nombre = ref("");
@@ -39,7 +38,7 @@ let resultados = ref([]);
 let bd = true;
 
 function editar(item, i) {
-  this.showDiv = !this.showDiv;
+  showDiv.value = !showDiv.value;
   console.log(item);
   console.log(i);
 
@@ -94,7 +93,7 @@ function guardar(i) {
       });
     }
     console.log(boletas.value);
-    this.showDiv = !this.showDiv;
+    showDiv.value = !showDiv.value;
   }
 }
 
@@ -121,27 +120,27 @@ function adquirido(mensaje) {
 }
 function modifiicarboleta(e, i) {
 
-this.showDisponible=false
-this.showBoletanopagada=false
-this.showBoletapagada=false
+showDisponible.value=false
+showBoletanopagada.value=false
+showBoletapagada.value=false
 
 
 
   if (e.estado == 'disponible') {
-    this.showDisponible = !this.showDisponible
+    showDisponible.value = !showDisponible.value
 
   }  else if(e.estado == 'reservada'){
-    this.showBoletanopagada = !this.showBoletanopagada
+    showBoletanopagada.value = !showBoletanopagada.value
 
   } else if(e.estado == 'pagada'){
-    this.showBoletapagada = !this.showBoletapagada
+    showBoletapagada.value = !showBoletapagada.value
   }
 
   Iestado.value = i
 }
 
 function adquirir() {
-  this.showadquirir = !this.showadquirir
+  showadquirir.value = !showadquirir.value
 
 }
 
@@ -161,7 +160,7 @@ function listar() {
 
 }
 function cerrar() {
-  this.showlistadoboletas = !this.showlistadoboletas
+  showlistadoboletas.value = !showlistadoboletas.value
 }
 
 function verdatos() {
@@ -182,14 +181,14 @@ function verdatos() {
 
 function listardatosparticipante(){
 
-  this.showlistadoboletas = !this.showlistadoboletas
+  showlistadoboletas.value = !showlistadoboletas.value
 
   let resultadodeambosdatos= encontrarCoincidencias(Datospagada.value, Datosnopagada.value);
 
   if(resultadodeambosdatos.length<=0){}
 
   else{
-this.showboletacomprada = !this.showboletacomprada
+showboletacomprada.value = !showboletacomprada.value
   }
   console.log(resultadodeambosdatos);
   
@@ -207,13 +206,13 @@ function getColorClass(estado) {
 
 
 function verdatosparticipante(){
-this.showParticipante = !this.showParticipante
+showParticipante.value = !showParticipante.value
 }
 
 
 
 function cerrardatos() {
-  this.showBoletanopagada = !this.showBoletanopagada
+  showBoletanopagada.value = !showBoletanopagada.value
 }
 
 function exportPdf() {
@@ -231,7 +230,7 @@ function exportPdf() {
         }
         bodyData.push(rowData);
       }
-      let headers = ['Nombre','Direcccion','telefono']
+      let headers = ['Nombre','Direcccion','telefono', 'Boletas']
       autoTable(doc, {
         head: [headers],
         body: bodyData,
@@ -240,7 +239,7 @@ function exportPdf() {
     }
 
 function personalizar() {
-  this.showPersonalizar = !this.showPersonalizar
+  showPersonalizar.value = !showPersonalizar.value
 }
 
 function obtener() {
@@ -254,14 +253,13 @@ function obtener() {
 
     if (pagado.value == "pagado") {
     adquirido('boleta adquirida');
-    // adquirido(`boleta ${e.}adquirida`);    
-    this.showadquirir = !this.showadquirir
+    showadquirir.value = !showadquirir.value
     listar()
 
 
   } else if(pagado.value == "reserva"){
     adquirido('boleta en estado de reserva');
-    this.showadquirir = !this.showadquirir
+    showadquirir.value = !showadquirir.value
       
     verdatos()
   }
@@ -276,15 +274,15 @@ function obtener() {
   if (index !== -1) {
     let innerIndex = resultados.value[index].boleta.indexOf(Iestado.value);
     if (innerIndex !== -1) {
-      resultados.value[index].boleta.splice(innerIndex, 1); // Elimina el elemento del array interno
+      resultados.value[index].boleta.splice(innerIndex, 1); 
 
       if (resultados.value[index].boleta.length === 0) {
-        resultados.value.splice(index, 1); // Elimina el elemento padre si el array interno está vacío
+        resultados.value.splice(index, 1); 
       }
     }
   }
 
-  console.log(resultados.value,"resulyaso");
+  console.log(resultados.value,"resultado");
   console.log(resultados.value.boleta,"boleta");
   
 }
@@ -293,13 +291,12 @@ function obtener() {
   
   
 
-function marcar(item,i) {
+function marcar() {
   botonBoletas.value[Iestado.value].estado="pagada"
   
-  
-  
-  
 }
+
+
 function encontrarCoincidencias(Datospagada, Datosnopagada) {
 
     let boletasAdquiridas = Datospagada.concat(Datosnopagada);
@@ -659,9 +656,9 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
         <p>Copyright 2024-Todos los derechos reservados</p>
       </div>
 
-<!-- <div class="impresion" v-if="showtabla"> -->
 
-<div class="impresion">
+<!-- <div class="impresion" v-if="showtabla"> -->
+<!-- <div class="impresion">
 
 <h3 id="titulopdf"> talonario </h3>
 
@@ -678,15 +675,17 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
   <p>Premio:</p>
   <p>{{ premio }}</p>
 </div>
-</div>
+</div> -->
 
-<div class="tablapdf" >
+<div class="tablapdf" v-show="talonario" >
     <table id='tab'>
       <thead>
         <tr>
           <th>Nombre</th>
           <th>Telefono</th>
           <th>Direccion</th>
+          <th>Boletas</th>
+
           <!-- <th>Boletas pagas</th>
           <th>Boletas no pagas</th>
           <th>Total pagado</th>
@@ -694,10 +693,11 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, i) in Datospagada" :key="i" >
-          <td>{{ item.nombre }}</td>
-          <td>{{ item.Telefono }}</td>
-          <td>{{ item.Direccion }}</td>
+        <tr v-for="(item1, i) in resultados" :key="i" >
+          <td>{{ item1.nombre }}</td>
+          <td>{{ item1.telefono }}</td>
+          <td>{{ item1.direccion }}</td>
+          <td>{{ item1.boleta }}</td>
           <!-- <td>{{ item.bol_paga }}</td>
           <td>{{ item.bol_no_paga }}</td>
           <td>{{ item.total_pagado }}</td>
@@ -709,7 +709,7 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
     </table> 
     </div>
 
-<div class="intro">
+<!-- <div class="intro">
 <div class="sorteo">
   <p>Saldo recaudado:</p>
   <p>{{ saldo_recaudado }}</p>
@@ -722,7 +722,7 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
 </div>
 
 
-</div>
+</div> -->
 
 
     </div>
@@ -743,7 +743,6 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 2px solid black;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1305,11 +1304,11 @@ margin-left: 20%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 2px solid black;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    box-shadow: 2px 3px 3px rgb(92, 90, 90);
     background-color: rgb(168, 168, 241);
 
   }
