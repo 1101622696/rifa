@@ -98,19 +98,41 @@ function guardar(i) {
 }
 
 function mostrarError(mensaje) {
-  Swal.fire({
-    icon: "error",
-    title: mensaje,
-    text: "Vuelve e intenta!",
-  });
+Swal.fire({
+  width: 400,
+  title: mensaje,
+  // input: "text",
+  text: "Vuelve e intenta!",
+  imageUrl: "https://i.gifer.com/APo8.gif",
+  color: "white",
+  background: "rgb(21, 102, 139",
+  imageWidth: 300,
+  imageHeight: 200,
+  backdrop: `
+    black
+      ` 
+});
 }
+
 function mostrarmensaje(mensaje) {
-  Swal.fire({
-    icon: "success",
-    title: mensaje,
-    text: "Bien hecho",
-  });
+Swal.fire({
+  width: 500,
+  title: mensaje,
+  text:  "Bien hecho",
+  imageUrl: "https://i.pinimg.com/originals/13/a1/5b/13a15b6384a77f463056c03b97dfe6ad.gif",
+  color: "black",
+  background: "rgb(21, 102, 139",
+  imageWidth: 300,
+  imageHeight: 200,
+  backdrop: `
+    #fff
+      ` ,
+  showConfirmButton: false,
+  timer: 1800
+
+});
 }
+
 function adquirido(mensaje) {
   Swal.fire({
     icon: "success",
