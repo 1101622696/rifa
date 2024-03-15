@@ -1387,9 +1387,21 @@ margin-left: 20%;
   }
 
   #guardar {
-    width: 35%;
-    height: 13%;
+    width: 70%;
+    height: 40px;
+    border-radius: 40px;
+    background-color: rgb(177, 197, 233);
+    border:none;
+    outline:none;
+    cursor:pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.4s ease;
+    color:black
   }
+  #guardar:hover{
+  background-color: rgb(255, 255, 255, 0.5);
+}
 
   #espacio1,
   #espacio2 {
