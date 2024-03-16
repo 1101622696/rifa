@@ -31,6 +31,7 @@ let direccion = ref("");
 let pagado = ref("")
 let botonBoletas=ref([])
 let selectedColor = ref("")
+let selectedColor1 = ref("")
 let seleccionacolor = ref("")
 let resultados = ref([]);
 
@@ -97,6 +98,7 @@ function guardar(i) {
   }
 }
 
+
 function mostrarError(mensaje) {
 Swal.fire({
   width: 400,
@@ -133,11 +135,21 @@ Swal.fire({
 });
 }
 
+
+
 function adquirido(mensaje) {
   Swal.fire({
-    icon: "success",
-    title: mensaje,
-    text: "Felicitaciones",
+    width: 400,
+  title: mensaje,
+  text: "boleta adquirida!",
+  imageUrl: "https://i0.wp.com/imgs.hipertextual.com/wp-content/uploads/2015/08/Jimmy-Fallon.gif?fit=650%2C365&quality=50&strip=all&ssl=1",
+  color: "white",
+  background: "rgb(21, 102, 139)",
+  imageWidth: 300,
+  imageHeight: 200,
+  backdrop: `
+    black
+      ` 
   });
 }
 function modifiicarboleta(e, i) {
@@ -190,7 +202,7 @@ function verdatos() {
     nombre: nombre.value,
     direccion: direccion.value,
     telefono: telefono.value,
-    boleta:Iestado
+    boleta:Iestado.value
   })
 
   botonBoletas.value[Iestado.value].estado="reservada"
@@ -236,6 +248,23 @@ showParticipante.value = !showParticipante.value
 function cerrardatos() {
   showBoletanopagada.value = !showBoletanopagada.value
 }
+function cerrardatos1() {
+  showlistadoboletas.value = !showlistadoboletas.value
+}function cerrardatos2() {
+  showPersonalizar.value = !showPersonalizar.value
+}
+function cerrardatos3() {
+  showDisponible.value = !showDisponible.value
+}
+function cerrardatos4() {
+  showParticipante.value = !showParticipante.value
+}
+function cerrardatos5() {
+  showBoletapagada.value = !showBoletapagada.value
+}
+function cerrardatos6() {
+  showadquirir.value = !showadquirir.value
+}
 
 function exportPdf() {
       const doc = new jsPDF('landscape');
@@ -259,6 +288,8 @@ function exportPdf() {
       });
       doc.save('Registro.pdf');
     }
+
+
 
 function personalizar() {
   showPersonalizar.value = !showPersonalizar.value
@@ -289,27 +320,15 @@ function obtener() {
 }
 
   
-  function liberar() {
+function liberar() {
   botonBoletas.value[Iestado.value].estado = "disponible";
 
-  let index = resultados.value.findIndex(item => item.boleta.includes(Iestado.value));
-  if (index !== -1) {
-    let innerIndex = resultados.value[index].boleta.indexOf(Iestado.value);
-    if (innerIndex !== -1) {
-      resultados.value[index].boleta.splice(innerIndex, 1); 
-
-      if (resultados.value[index].boleta.length === 0) {
-        resultados.value.splice(index, 1); 
-      }
-    }
-  }
-
-  console.log(resultados.value,"resultado");
-  console.log(resultados.value.boleta,"boleta");
-  
+  let index = Datosnopagada.value.findIndex(item => item.boleta==Iestado.value);
+if(index!==-1){
+  Datosnopagada.value.splice(index,1)
+}
 }
 
-  
   
   
 
@@ -340,17 +359,60 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
                 nombre: item1.nombre,
                 direccion: item1.direccion,
                 telefono: item1.telefono,
-                boleta: [item1.boleta]
+                boleta:[item1.boleta]
             });
         }
     
-    console.log(resultados);
+    console.log(`esto es resultados:${resultados}`);
       });
 
-    console.log(boletasAdquiridas);
+    console.log(`esto es boletasAdquiridas:${boletasAdquiridas}`);
     
     return resultados.value;
 }
+
+
+// function encontrarCoincidencias(Datospagada, Datosnopagada) {
+//     let resultados = {
+//         value: []
+//     };
+
+//     let boletasAdquiridas = Datospagada.concat(Datosnopagada);
+
+//     boletasAdquiridas.forEach(function(item1) {
+//         let encontrado = resultados.value.find(function(item2) {
+//             return item1.telefono == item2.telefono;
+//         });
+
+//         if (encontrado) {
+//             let index = resultados.value.findIndex(function(item2) {
+//                 return item1.telefono == item2.telefono;
+//             });
+//             if (!resultados.value[index].Boletas.includes(item1.boleta)) {
+//                 resultados.value[index].Boletas.push(item1.boleta);
+//             }
+//         } else {
+//             resultados.value.push({
+//                 nombre: item1.nombre,
+//                 direccion: item1.direccion,
+//                 telefono: item1.telefono,
+//                 Boletas: [item1.boleta]
+//             });
+//         }
+//     });
+
+//     resultados.value.forEach(function(item) {
+//         console.log(`Nombre: ${item.nombre}, Dirección: ${item.direccion}, Teléfono: ${item.telefono}, Boletas: ${item.Boletas.join(', ')}`);
+//     });
+
+//     console.log('Esto son los resultados:', resultados.value);
+//     console.log('Esto es boletasAdquiridas:', boletasAdquiridas);
+
+//     return resultados.value;
+// }
+
+
+
 
 
 </script>
@@ -360,18 +422,36 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
 <template>
   <div class="contenedorPrincipal">
 
-    <div class="talonario">
+      <div :style="{ backgroundColor: selectedColor1 }" id="miDiv3" class="talonario">
+
 
       <div class="disponible" v-if="showDisponible">
 
+        <div class="tituloadquirir">
         <h3>Boleta {{ Iestado }}</h3>
+        <div class="equis1" >
+          <button id="equis1" @click="cerrardatos3()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.6585 4.92888C18.049 4.53836 18.6822 4.53835 19.0727 4.92888C19.4632 5.3194 19.4632 5.95257 19.0727 6.34309L13.4158 12L19.0727 17.6568C19.4632 18.0473 19.4632 18.6805 19.0727 19.071C18.6822 19.4615 18.049 19.4615 17.6585 19.071L12.0016 13.4142L6.34481 19.071C6.3387 19.0771 6.33254 19.0831 6.32632 19.089C5.93455 19.4614 5.31501 19.4554 4.93059 19.071C4.6377 18.7781 4.56447 18.3487 4.71092 17.9876C4.75973 17.8672 4.83296 17.7544 4.93059 17.6568L10.5874 12L4.93059 6.34314C4.54006 5.95262 4.54006 5.31945 4.93059 4.92893C5.32111 4.5384 5.95428 4.5384 6.3448 4.92893L12.0016 10.5857L17.6585 4.92888Z" fill="white"/>
+</svg>
+</button>
+        </div>
+      </div>
         <h5>Estado: {{ botonBoletas[Iestado].estado }} </h5>
         <button id="adquirirb" @click="adquirir()">adquirir boleta</button>
       </div>
 
 
       <div class="adquirir" v-if="showadquirir">
+  
+        <div class="tituloboladquirir">
         <h3 id="bol">Boleta a Adquirir: {{ Iestado }}</h3>
+        <div class="equis" >
+          <button id="equis5" @click="cerrardatos6()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.6585 4.92888C18.049 4.53836 18.6822 4.53835 19.0727 4.92888C19.4632 5.3194 19.4632 5.95257 19.0727 6.34309L13.4158 12L19.0727 17.6568C19.4632 18.0473 19.4632 18.6805 19.0727 19.071C18.6822 19.4615 18.049 19.4615 17.6585 19.071L12.0016 13.4142L6.34481 19.071C6.3387 19.0771 6.33254 19.0831 6.32632 19.089C5.93455 19.4614 5.31501 19.4554 4.93059 19.071C4.6377 18.7781 4.56447 18.3487 4.71092 17.9876C4.75973 17.8672 4.83296 17.7544 4.93059 17.6568L10.5874 12L4.93059 6.34314C4.54006 5.95262 4.54006 5.31945 4.93059 4.92893C5.32111 4.5384 5.95428 4.5384 6.3448 4.92893L12.0016 10.5857L17.6585 4.92888Z" fill="white"/>
+</svg>
+</button>
+        </div>
+      </div>
         <div class="nombre"><svg width="30" height="27" viewBox="0 0 24 24" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -412,6 +492,13 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
       <div class="participante" v-if="showParticipante">
         <div class="tituloparticipante">
           <P>PARTICIPANTE</P>
+        
+          <div class="equis" >
+          <button id="equis" @click="cerrardatos4()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.6585 4.92888C18.049 4.53836 18.6822 4.53835 19.0727 4.92888C19.4632 5.3194 19.4632 5.95257 19.0727 6.34309L13.4158 12L19.0727 17.6568C19.4632 18.0473 19.4632 18.6805 19.0727 19.071C18.6822 19.4615 18.049 19.4615 17.6585 19.071L12.0016 13.4142L6.34481 19.071C6.3387 19.0771 6.33254 19.0831 6.32632 19.089C5.93455 19.4614 5.31501 19.4554 4.93059 19.071C4.6377 18.7781 4.56447 18.3487 4.71092 17.9876C4.75973 17.8672 4.83296 17.7544 4.93059 17.6568L10.5874 12L4.93059 6.34314C4.54006 5.95262 4.54006 5.31945 4.93059 4.92893C5.32111 4.5384 5.95428 4.5384 6.3448 4.92893L12.0016 10.5857L17.6585 4.92888Z" fill="white"/>
+</svg>
+</button>
+        </div>
         </div>
         <div class="datosparticipante">
           <div class="nombrep">
@@ -454,12 +541,18 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
                   d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12Z"
                   fill="black" />
               </svg>
-              por pagar</p>
+              {{ botonBoletas[Iestado].estado  }}</p>
           </div>
         </div>
       </div>
 
       <div class="boletapagada" v-if="showBoletapagada">
+        <div class="equis1" >
+          <button id="equis4" @click="cerrardatos5()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.6585 4.92888C18.049 4.53836 18.6822 4.53835 19.0727 4.92888C19.4632 5.3194 19.4632 5.95257 19.0727 6.34309L13.4158 12L19.0727 17.6568C19.4632 18.0473 19.4632 18.6805 19.0727 19.071C18.6822 19.4615 18.049 19.4615 17.6585 19.071L12.0016 13.4142L6.34481 19.071C6.3387 19.0771 6.33254 19.0831 6.32632 19.089C5.93455 19.4614 5.31501 19.4554 4.93059 19.071C4.6377 18.7781 4.56447 18.3487 4.71092 17.9876C4.75973 17.8672 4.83296 17.7544 4.93059 17.6568L10.5874 12L4.93059 6.34314C4.54006 5.95262 4.54006 5.31945 4.93059 4.92893C5.32111 4.5384 5.95428 4.5384 6.3448 4.92893L12.0016 10.5857L17.6585 4.92888Z" fill="white"/>
+</svg>
+</button>
+        </div>
           <button id="ver" @click="verdatosparticipante()">Ver datos del participante de la boleta pagada</button>
 </div>
 
@@ -495,7 +588,7 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
                 d="M12 7.5C11.4477 7.5 11 7.94772 11 8.5V12C11 12.3573 11.1906 12.6874 11.5 12.866L14.9641 14.866C15.0239 14.9005 15.0858 14.9282 15.1488 14.9492C15.5901 15.0963 16.0885 14.9185 16.3301 14.5C16.6063 14.0217 16.4424 13.4101 15.9641 13.134L13 11.4227V8.5C13 7.94772 12.5523 7.5 12 7.5Z"
                 fill="black" />
             </svg>
-            <button id="liberar" v-for="(item, i) in resultados" @click="liberar(item,i)">liberar boleta</button>
+            <button id="liberar"   @click="liberar()" >liberar boleta</button>
           </div>
           <div class="bolnopagada"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
               xmlns="http://www.w3.org/2000/svg">
@@ -514,6 +607,12 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
       <div class="listado" v-if="showlistadoboletas">
         <div class="titulolistado">
           <p>LISTADO DE BOLETAS</p>
+          <div class="equis" >
+          <button id="equis2" @click="cerrardatos1()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.6585 4.92888C18.049 4.53836 18.6822 4.53835 19.0727 4.92888C19.4632 5.3194 19.4632 5.95257 19.0727 6.34309L13.4158 12L19.0727 17.6568C19.4632 18.0473 19.4632 18.6805 19.0727 19.071C18.6822 19.4615 18.049 19.4615 17.6585 19.071L12.0016 13.4142L6.34481 19.071C6.3387 19.0771 6.33254 19.0831 6.32632 19.089C5.93455 19.4614 5.31501 19.4554 4.93059 19.071C4.6377 18.7781 4.56447 18.3487 4.71092 17.9876C4.75973 17.8672 4.83296 17.7544 4.93059 17.6568L10.5874 12L4.93059 6.34314C4.54006 5.95262 4.54006 5.31945 4.93059 4.92893C5.32111 4.5384 5.95428 4.5384 6.3448 4.92893L12.0016 10.5857L17.6585 4.92888Z" fill="white"/>
+</svg>
+</button>
+        </div>
           <div class="buscador">
             <input type="text" placeholder="Buscar" id="buscador"><svg width="24" height="24" viewBox="0 0 24 24"
               fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -524,22 +623,22 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
           </div>
         </div>
         <div class="listadobol">
-            <div  class="boletacomprada" v-for="(item, i) in resultados" :key="i"  :v-if="showboletacomprada">
+            <div  class="boletacomprada" v-for="(item1, i) in resultados" :key="i"  :v-if="showboletacomprada">
             <div class="datop">
               <div class="texto-nombre">Nombre</div>
-              <div class="texto-nombrep">{{ item.nombre }}</div>
+              <div class="texto-nombrep">{{ item1.nombre }}</div>
             </div>
             <div class="datop">
               <div class="texto-nombre">Teléfono</div>
-              <div class="texto-telefono">{{ item.telefono }}</div>
+              <div class="texto-telefono">{{ item1.telefono }}</div>
             </div>
             <div class="datop">
               <div class="texto-nombre">Direccion:</div>
-              <div class="texto-direccion">{{ item.direccion }}</div>
+              <div class="texto-direccion">{{ item1.direccion }}</div>
             </div>
             <div class="datop">
               <div class="texto-nombre">Boletas</div>
-              <div class="texto-09-10">{{ item.boleta }}</div>
+              <div class="texto-09-10">{{ item1.boleta.join(', ') }}</div>
             </div>
           </div>
         </div>
@@ -574,10 +673,9 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
       </div>
       <section id="loteria">
         <button id="fichas" v-for="(e, i) in botonBoletas" :key="i" :class="getColorClass(e.estado)" @click="modifiicarboleta(e, i)">{{ i < 10 ? '0' + i : i }} </button>
-        <!-- <button id="fichas" v-for="(e, i) in botonBoletas" :key="i" :style="item.Iestado === 'pagada' ? 'backgroundColor:red' : 'backgroundColor:blue'" @click="modifiicarboleta(e, i)">{{ i < 10 ? '0' + i : i }} </button> -->
       </section>
       <div class="fondo1">
-          <div :style="{ backgroundColor: seleccionacolor }" id="miDiv1" class="fondo">
+          <div :style="{ backgroundColor: seleccionacolor }" id="3" class="fondo">
 
           <div class="subtitulo">
             <h4>INFORMACION</h4>
@@ -607,7 +705,7 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
           </div>
 </div>
 
-          <div :style="{ backgroundColor: seleccionacolor }" id="miDiv1" class="accion">
+          <div :style="{ backgroundColor: seleccionacolor }" id="miDiv2" class="accion">
 
           <div class="subtitulo">
             <h5>ACCIONES</h5>
@@ -659,12 +757,25 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
 </div>
 
       <div id="personaliza" v-if="showPersonalizar">
-        <div class="titulopersonalizar">PALETA DE COLORES</div>
+        <div class="titulopersonalizar">
+ <p>PALETA DE COLORES </p>
+ <div class="equis" >
+          <button id="equis3" @click="cerrardatos2()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.6585 4.92888C18.049 4.53836 18.6822 4.53835 19.0727 4.92888C19.4632 5.3194 19.4632 5.95257 19.0727 6.34309L13.4158 12L19.0727 17.6568C19.4632 18.0473 19.4632 18.6805 19.0727 19.071C18.6822 19.4615 18.049 19.4615 17.6585 19.071L12.0016 13.4142L6.34481 19.071C6.3387 19.0771 6.33254 19.0831 6.32632 19.089C5.93455 19.4614 5.31501 19.4554 4.93059 19.071C4.6377 18.7781 4.56447 18.3487 4.71092 17.9876C4.75973 17.8672 4.83296 17.7544 4.93059 17.6568L10.5874 12L4.93059 6.34314C4.54006 5.95262 4.54006 5.31945 4.93059 4.92893C5.32111 4.5384 5.95428 4.5384 6.3448 4.92893L12.0016 10.5857L17.6585 4.92888Z" fill="white"/>
+</svg>
+</button>
+        </div></div>
         <p class="elige">Elige un color para el... </p>
+
         <div class="dif-opciones">
         <div class="opcionescolor">
         <label for="colorPicker">header y footer:</label>
         <input type="color" id="colorPicker" v-model="selectedColor">
+      </div>
+
+      <div class="opcionescolor">
+        <label for="colorPicker">fondo talonario</label>
+        <input type="color" id="colorPicker" v-model="selectedColor1">
       </div>
 
       <div class="opcionescolor">
@@ -719,7 +830,7 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
           <td>{{ item1.nombre }}</td>
           <td>{{ item1.telefono }}</td>
           <td>{{ item1.direccion }}</td>
-          <td>{{ item1.boleta }}</td>
+          <td>{{ item1.boleta.join(', ') }}</td>
           <!-- <td>{{ item.bol_paga }}</td>
           <td>{{ item.bol_no_paga }}</td>
           <td>{{ item.total_pagado }}</td>
@@ -758,6 +869,10 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
 
 <style scoped>
 @media (1367px <=width <=2700px) {
+
+/* #miDiv3{
+  
+} */
 .talonario {
     width: 90vw;
     height: 90vh;
@@ -769,7 +884,7 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to top left, #7960e9 0%, #a84bdf 100%);
+    border: 1px solid rgb(255, 255, 255);    /* background: linear-gradient(to top left, #7960e9 0%, #a84bdf 100%); */
   }
 
   #miDiv {
@@ -858,7 +973,15 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
     height: 10%;
     background-color: rgb(200, 198, 198);
     color: black;
+    border:none;
+    /* outline:none; */
+    /* text-decoration: none; */
+  /* border-bottom: 2px solid #fff; */
+
   }
+  #espacio:hover{
+    background-color: rgb(177, 175, 175);
+}
 
   .fondo1 {
     display: flex;
@@ -979,6 +1102,7 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
     height: 10%;
     background-color: rgb(200, 198, 198);
     color: black;
+
   }
 
   #busca,
@@ -991,12 +1115,12 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
 
 
   #loteria {
-    width: 36vw;
+    width: 46vw;
     height: 60vh;
-    font-size: 20px;
+    font-size: 10px;
     display: grid;
     gap: 1%;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(10, 1fr);
     overflow: scroll;
     position: absolute;
     scrollbar-width: none;
@@ -1028,7 +1152,7 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
   }
   .disponible {
     width: 12vw;
-    height: 25vh;
+    height: 31vh;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -1037,6 +1161,47 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
     z-index: 1;
     color:black
   }
+  .tituloadquirir{
+    width:100%;
+    height:3vmax;
+    box-sizing: border-box;
+    background-color: #0cabb1;
+    display:flex;
+    padding-left: 21%;
+  }
+  .tituloboladquirir{
+    width:100%;
+    height:4vmax;
+    box-sizing: border-box;
+    background-color: #32979b;
+    display:flex;
+justify-content: center;
+align-items: center;
+    padding-left: 14%;
+  }
+  #equis5{
+    background-color: #32979b;
+    width:3vmax;
+    height: 3vmax;
+    font-size: 10px;
+    margin-left: -220%;
+  }
+  #equis5:hover{
+    border:none;
+    outline:none;
+    background-color: red;
+  }
+  #equis1{
+    background-color: #0cabb1;
+    width:10px;
+    height: 2vmax;
+    font-size: 10px;
+    margin-left: 150%;
+  }
+  #equis1:hover{
+  border:none;
+  outline:none
+}
 
   #adquirirb {
     width: 8vw;
@@ -1097,7 +1262,7 @@ justify-content: center;
     justify-content: center;
     align-items: center;
     /* position: fixed; */
-    background: linear-gradient(to top right, #2f2897 0%, #0a7dca 100%);
+    background-color: rgb(29, 38, 122);
     color: black;
     font-size: large;
     font-weight: 600;
@@ -1145,7 +1310,7 @@ justify-content: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to top right, #2b447a 0%, #0c2ea0 100%);
+    background-color: rgb(29, 38, 122);
     color: white;
     font-size: larger;
     font-weight: 600;
@@ -1197,12 +1362,27 @@ justify-content: center;
     margin-top: -4%;
     display: flex;
     /* padding-left: 10%; */
-    background: linear-gradient(to top right, #2f2897 0%, #0a7dca 100%);
+    background-color: rgb(38, 49, 153);
     color: black;
     font-size: large;
     font-weight: 600;
     letter-spacing: 3px;
+    box-sizing: border-box;
     font-family: Georgia, 'Times New Roman', Times, serif;
+  }
+  #equis2{
+    background-color: rgb(38, 49, 153);
+    width:3vmax;
+    height: 2vmax;
+    font-size: 10px;
+text-align: center;
+    margin-left: 1220%;
+  }
+  #equis2:hover{
+    background-color:
+     red;  border:none;
+  outline:none
+
   }
 
   .buscador {
@@ -1219,22 +1399,25 @@ justify-content: center;
     height: 73%;
     overflow: scroll;
     scrollbar-width: none;
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);  
   }
 
   .boletacomprada {
-    height: 85%;
-    width: 35%;
+    height: 95%;
+    width: 65%;
+    margin-left: 3%;
     display: flex;
     box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.5);
     flex-direction: column;
-    background: linear-gradient(to top right, #8f8bc7 0%, #a9cae0 100%);
+    background: linear-gradient(to top right, #6960e7 0%, #67addb 100%);
     box-sizing: border-box;
   }
 
   .boletapagada{
     width: 400px;
     height: 100px;
-    background: linear-gradient(to top right, #5b6594 0%, #2446b4 100%);
+    background-color: rgb(29, 38, 122);
     border-radius: 2px;
     position: fixed;
     bottom: 0;
@@ -1243,6 +1426,21 @@ justify-content: center;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-sizing: border-box;
+    padding-right: 2%;
+  }
+  #equis4{
+    background-color: rgb(29, 38, 122);
+    width:3vmax;
+    height: 2vmax;
+    font-size: 10px;
+    margin-left: 20%;
+  }
+  #equis4:hover{
+    background-color: red;
+  border:none;
+  outline:none
+
   }
   #ver {
     width: 85%;
@@ -1271,6 +1469,19 @@ justify-content: center;
     margin-left: -250px;
     background: linear-gradient(to top right, #797f9b 0%, #1871bb 100%);
     border-radius: 1vmax;
+  }
+  #equis3{
+    background-color: rgb(29, 38, 122);
+    width:3vmax;
+    height: 2vmax;
+    font-size: 10px;
+    margin-left: -210%;
+    text-decoration: none;
+  }
+  #equis3:hover{
+    background-color: rgb(233, 12, 12);
+    border:none;
+  outline:none
   }
   .opcionescolor{
     display:grid;
@@ -1304,6 +1515,10 @@ margin-left: 20%;
   background-color: rgb(29, 38, 122);
   
 }
+#equis:hover{
+  border:none;
+  outline:none
+}
 .green {
   background-color: rgb(56, 192, 56);
 }
@@ -1315,12 +1530,14 @@ margin-left: 20%;
   background-color: #5971be;
 }
 
+
+
 }
 
 @media (900px <=width <=1366px) {
 
   .talonario {
-    width: 90vw;
+    width: 95vw;
     height: 90vh;
     position: absolute;
     top: 50%;
@@ -1383,9 +1600,13 @@ margin-left: 20%;
     height: 350px;
     background: linear-gradient(to top right, #43389F 0%, #4ec6ca 100%);
     border-radius: 2px;
-    z-index: 1;
+    z-index: 1;    
   }
 
+  /* #guardar {
+    width: 35%;
+    height: 13%;
+  } */
   #guardar {
     width: 70%;
     height: 40px;
@@ -1402,6 +1623,7 @@ margin-left: 20%;
   #guardar:hover{
   background-color: rgb(255, 255, 255, 0.5);
 }
+
 
   #espacio1,
   #espacio2 {
@@ -1424,7 +1646,15 @@ margin-left: 20%;
     height: 10%;
     background-color: rgb(200, 198, 198);
     color: black;
+    border:none;
+    /* outline:none; */
+    /* text-decoration: none; */
+  /* border-bottom: 2px solid #fff; */
+
   }
+  #espacio:hover{
+    background-color: rgb(177, 175, 175);
+}
 
   .subtitulo {
     position: absolute;
@@ -1533,21 +1763,23 @@ margin-left: 20%;
   }
 
   #loteria {
-    width: 36vw;
+    width: 43vw;
     height: 60vh;
-    font-size: 20px;
+    font-size: 12px;
     display: grid;
-    gap: 1%;
-    grid-template-columns: repeat(6, 1fr);
+    gap: 0.5%;
+    grid-template-columns: repeat(10, 1fr);
     overflow: scroll;
     position: absolute;
     scrollbar-width: none;
   }
 #fichas{
   /* background-color: #5971be; */
-  border-radius: 4vmax;
+  border-radius: 2vmax;
   height: 100%;
   margin-bottom: 4%;
+  font-size: 14px;
+  font-weight: 700;
   color:black;
 }
 #fichas:hover{
@@ -1577,7 +1809,47 @@ margin-left: 20%;
     z-index: 1;
     color:black
   }
-
+  .tituloadquirir{
+    width:100%;
+    height:4vmax;
+    box-sizing: border-box;
+    background-color: #32979b;
+    display:flex;
+    padding-left: 14%;
+  }
+  .tituloboladquirir{
+    width:100%;
+    height:4vmax;
+    box-sizing: border-box;
+    background-color: #32979b;
+    display:flex;
+justify-content: center;
+align-items: center;
+    padding-left: 14%;
+  }
+  #equis5{
+    background-color: #32979b;
+    width:3vmax;
+    height: 3vmax;
+    font-size: 10px;
+    margin-left: -220%;
+  }
+  #equis5:hover{
+    border:none;
+    outline:none;
+    background-color: red;
+  }
+  #equis1{
+    background-color: #32979b;
+    width:3vmax;
+    height: 2vmax;
+    font-size: 10px;
+    margin-left: 30%;
+  }
+ #equis1{
+  border:none;
+  outline:none
+ } 
   #adquirirb {
     width: 8vw;
     height: 10vh;
@@ -1586,12 +1858,13 @@ margin-left: 20%;
 
   #input{
     width: 20vw;
-    height: 5vh;
+    height: 6vh;
     color: black;
     font-weight: 600;
     letter-spacing: 1px;
     font-family: 'Arial Narrow', Arial, sans-serif;
     background-color: #a2a3a8;
+    border:none;
   }
   #botadquirir {
     width: 10vw;
@@ -1637,7 +1910,7 @@ justify-content: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to top right, #2f2897 0%, #0a7dca 100%);
+    background-color: rgb(29, 38, 122);
     color: black;
     font-size: large;
     font-weight: 600;
@@ -1675,7 +1948,7 @@ justify-content: center;
   .boletapagada{
     width: 400px;
     height: 100px;
-    background: linear-gradient(to top right, #5b6594 0%, #2446b4 100%);
+    background-color: rgb(29, 38, 122);
     border-radius: 2px;
     position: fixed;
     bottom: 0;
@@ -1684,6 +1957,20 @@ justify-content: center;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-right: 2%;
+    box-sizing: border-box;
+    }
+  #equis4{
+    background-color: rgb(29, 38, 122);
+    width:3vmax;
+    height: 2vmax;
+    font-size: 10px;
+    margin-left: 5%;
+  }
+  #equis4:hover{
+    background-color: red;
+    border:none;
+  outline:none
   }
   #ver {
     width: 85%;
@@ -1711,7 +1998,7 @@ justify-content: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to top right, #2b447a 0%, #0c2ea0 100%);
+    background-color: rgb(29, 38, 122);
     color: white;
     font-size: larger;
     font-weight: 600;
@@ -1761,12 +2048,27 @@ justify-content: center;
     height: 20%;
     margin-top: -4%;
     display: flex;
-    background: linear-gradient(to top right, #2f2897 0%, #0a7dca 100%);
+    background-color: rgb(38, 49, 153);
     color: black;
     font-size: large;
     font-weight: 600;
     letter-spacing: 3px;
+    box-sizing: border-box;
     font-family: Georgia, 'Times New Roman', Times, serif;
+  }
+
+  #equis2{
+    background-color: rgb(38, 49, 153);
+    width:3vmax;
+    height: 2vmax;
+    font-size: 10px;
+text-align: center;
+    margin-left: 1220%;
+  }
+  #equis2:hover{
+    background-color: red;
+    border:none;
+  outline:none
   }
 
   .buscador {
@@ -1834,12 +2136,27 @@ justify-content: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to top right, #2f2897 0%, #0a7dca 100%);
+    background-color: rgb(29, 38, 122);
     color: black;
     font-size: large;
     font-weight: 600;
     letter-spacing: 3px;
+    box-sizing: border-box;
     font-family: Georgia, 'Times New Roman', Times, serif;
+  }
+
+  #equis3{
+    background-color: rgb(29, 38, 122);
+    width:3vmax;
+    height: 2vmax;
+    font-size: 10px;
+    margin-left: -210%;
+    text-decoration: none;
+  }
+  #equis3:hover{
+    background-color: rgb(233, 12, 12);
+    border:none;
+  outline:none
   }
 
   .opcionescolor{
@@ -1874,6 +2191,10 @@ margin-left: 20%;
   margin-top:-10% ;
   background-color: rgb(29, 38, 122);
 }
+#equis:hover{
+  border:none;
+  outline:none
+}
 .green {
   background-color: rgb(56, 192, 56);
 }
@@ -1883,60 +2204,6 @@ margin-left: 20%;
 }
 .blue{
   background-color: #5971be;
-}
-
-#titulopdf{
-  color:rgb(88, 88, 209);
-  font-size: xx-large;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-}
-
-
-.impresion{
-  width:90%;
-  height:auto;
-  /* border:2px solid black; */
-  box-sizing: border-box;
-}
-
-
-.intro{
-  width:100%;
-  height:30%;
-  /* border:2px solid black; */
-  display:grid;
-  grid-template-columns: repeat(2, 1fr);
-
-}
-
-.sorteo{
-  width:80%;
-  height:85%;
-  /* border:2px solid black; */
-  text-align: left;
-  color:black;
-  font-weight: 600;
-
-}
-
-table{
-    width:100%;
-    border-collapse:collapse ;
-    
-  }
-  th, td{
-    /* border: solid 1px #000; */
-    text-align: center;
-    padding:2%;
-    width:10%;
-  }
-  th{
-    background-color: rgb(80, 88, 192);
-    color:white;
-
-}
-tr:nth-child(even){
-    background-color: #78e46e;
 }
 
 
@@ -2038,6 +2305,28 @@ tr:nth-child(even){
     height: 10%;
     background-color: rgb(200, 198, 198);
     color: black;
+  }
+  .tituloboladquirir{
+    width:100%;
+    height:4vmax;
+    box-sizing: border-box;
+    background-color: #32979b;
+    display:flex;
+justify-content: center;
+align-items: center;
+    padding-left: 14%;
+  }
+  #equis5{
+    background-color: #32979b;
+    width:3vmax;
+    height: 3vmax;
+    font-size: 10px;
+    margin-left: -220%;
+  }
+  #equis5:hover{
+    border:none;
+    outline:none;
+    background-color: red;
   }
 
   .fondo1 {
@@ -2309,3 +2598,4 @@ box-shadow: 4px 8px 16px 0 rgba(0, 0, 0, 0.4);
 }
 }
 </style>
+
