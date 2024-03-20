@@ -6,6 +6,7 @@ import  jsPDF  from "jspdf";
 import autoTable from 'jspdf-autotable'
 
 
+
 let loteria = ref("");
 let premio = ref("");
 let valorBoleta = ref("");
@@ -16,6 +17,7 @@ let showDiv = ref(true);
 let Iestado = ref("");
 let showDisponible = ref(false)
 let showadquirir = ref(false)
+let showganadora = ref(false)
 let showboletacomprada = ref(false)
 let showParticipante = ref(false)
 let showBoletanopagada = ref(false)
@@ -56,6 +58,13 @@ function editar(item, i) {
 
 function guardar(i) {
   let fechaActual = new Date();
+
+  fechaActual.setHours(23, 59, 59, 999);
+
+  let fechaMañana = new Date();
+  fechaMañana.setDate(fechaMañana.getDate() + 1);
+  fechaMañana.setHours(0, 0, 0, 0);
+
   let fechaSeleccionada = new Date(fecha.value);
 
   if (premio.value === "") {
@@ -66,9 +75,9 @@ function guardar(i) {
     mostrarError("Debe ingresar la loteria con la que juega");
   } else if (numeroboletas.value === "") {
     mostrarError("Debe seleccionar una cantidad de boletas");
-  } else if (fecha.value==="") {
-    mostrarError("Debe ingresar una fecha que sea después del día de hoy");
-  } else if (fechaSeleccionada <= fechaActual || fechaSeleccionada === "") {
+  } else if (fecha.value === "") {
+    mostrarError("Debe ingresar una fecha");
+  } else if (fechaSeleccionada <= fechaActual || fechaSeleccionada < fechaMañana){
     mostrarError("Debe ingresar una fecha que sea después del día de hoy");
   } else {
     if (bd === true) {
@@ -97,6 +106,7 @@ function guardar(i) {
     showDiv.value = !showDiv.value;
   }
 }
+
 
 
 function mostrarError(mensaje) {
@@ -235,7 +245,10 @@ function getColorClass(estado) {
         return 'green';
       } else if (estado === 'reservada') {
         return 'red';
+      }else if (estado === 'ganadora') {
+        return 'yellow';
       }
+
     }            
 
 
@@ -327,7 +340,7 @@ function liberar() {
 if(index!==-1){
   Datosnopagada.value.splice(index,1)
 
-  let indexR = -1;
+let indexR = -1;
 let indexBoleta = -1;
 
 resultados.value.some((item, index) => {
@@ -347,11 +360,12 @@ if (indexR !== -1 && indexBoleta !== -1) {
 }
 }
 }
+
+  
   
 
 function marcar() {
-  botonBoletas.value[Iestado.value].estado="pagada"
-  
+  botonBoletas.value[Iestado.value].estado="pagada" 
 }
 
 
@@ -389,44 +403,45 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
 }
 
 
-// function encontrarCoincidencias(Datospagada, Datosnopagada) {
-//     let resultados = {
-//         value: []
-//     };
 
-//     let boletasAdquiridas = Datospagada.concat(Datosnopagada);
+function mirarestado() {
+  Swal.fire({
+    width: 400,
+    title: "Digite la balota ganadora",
+    input: "text",
+    text: "Por favor, ingrese un número válido entre 1 y 100.!",
+    imageUrl: "https://i.pinimg.com/originals/13/a1/5b/13a15b6384a77f463056c03b97dfe6ad.gif",
+    color: "white",
+    background: "rgb(21, 102, 139",
+    imageWidth: 300,
+    imageHeight: 200,
+    inputValidator: (value) => {
+      if (!/^\d+$/.test(value) || parseInt(value) < 1 || parseInt(value) > 99) {
+        return Swal.fire({
+    width: 400,
+    title: "Digite un numero",
+    text: "Por favor, ingrese un número válido entre 1 y 100.!",
+    imageUrl: "https://i.gifer.com/APo8.gif",
+    color: "white",
+    background: "rgb(21, 102, 139",
+    imageWidth: 300,
+    imageHeight: 200,
+  backdrop: `
+    black
+      ` });
+    ;
+      }
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const numeroGanador = parseInt(result.value);
+      // botonBoletas.value[Iestado.value].estado="ganadora"
+      console.log("Número ganador:", numeroGanador);
+    }
+  });
+}
 
-//     boletasAdquiridas.forEach(function(item1) {
-//         let encontrado = resultados.value.find(function(item2) {
-//             return item1.telefono == item2.telefono;
-//         });
 
-//         if (encontrado) {
-//             let index = resultados.value.findIndex(function(item2) {
-//                 return item1.telefono == item2.telefono;
-//             });
-//             if (!resultados.value[index].Boletas.includes(item1.boleta)) {
-//                 resultados.value[index].Boletas.push(item1.boleta);
-//             }
-//         } else {
-//             resultados.value.push({
-//                 nombre: item1.nombre,
-//                 direccion: item1.direccion,
-//                 telefono: item1.telefono,
-//                 Boletas: [item1.boleta]
-//             });
-//         }
-//     });
-
-//     resultados.value.forEach(function(item) {
-//         console.log(`Nombre: ${item.nombre}, Dirección: ${item.direccion}, Teléfono: ${item.telefono}, Boletas: ${item.Boletas.join(', ')}`);
-//     });
-
-//     console.log('Esto son los resultados:', resultados.value);
-//     console.log('Esto es boletasAdquiridas:', boletasAdquiridas);
-
-//     return resultados.value;
-// }
 
 
 
@@ -455,6 +470,10 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
       </div>
         <h5>Estado: {{ botonBoletas[Iestado].estado }} </h5>
         <button id="adquirirb" @click="adquirir()">adquirir boleta</button>
+      </div>
+
+      <div class="bolganadora" v-if="showganadora">
+        <p>ESTA ES LA BOLETA GANADORA</p>
       </div>
 
 
@@ -665,7 +684,7 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
       </div>
 
       <div :style="{ backgroundColor: selectedColor }" id="miDiv" class="header">
-        <p class="titulotalonario">TALONARIO</p>
+        <p class="titulotalonario"><i class="fi fi-rs-heart"></i>TALONARIO</p>
       </div>
 
       <div class="configurarTalonario" v-if="showDiv">
@@ -1546,7 +1565,9 @@ margin-left: 20%;
 .blue{
   background-color: #5971be;
 }
-
+.yellow{
+  background-color: rgb(190, 207, 35);
+}
 
 
 }
@@ -2222,7 +2243,9 @@ margin-left: 20%;
 .blue{
   background-color: #5971be;
 }
-
+.yellow{
+  background-color: rgb(190, 207, 35);
+}
 
 }
 
@@ -2612,6 +2635,9 @@ box-shadow: 4px 8px 16px 0 rgba(0, 0, 0, 0.4);
 }
 .blue{
   background-color: #5971be;
+}
+.yellow{
+  background-color: rgb(190, 207, 35);
 }
 }
 </style>
