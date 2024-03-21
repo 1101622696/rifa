@@ -17,7 +17,6 @@ let showDiv = ref(true);
 let Iestado = ref("");
 let showDisponible = ref(false)
 let showadquirir = ref(false)
-let showganadora = ref(false)
 let showboletacomprada = ref(false)
 let showParticipante = ref(false)
 let showBoletanopagada = ref(false)
@@ -58,14 +57,7 @@ function editar(item, i) {
 
 function guardar(i) {
   let fechaActual = new Date();
-
-  fechaActual.setHours(23, 59, 59, 999);
-
-  let fechaMañana = new Date();
-  fechaMañana.setDate(fechaMañana.getDate() + 1);
-  fechaMañana.setHours(0, 0, 0, 0);
-
-  let fechaSeleccionada = new Date(fecha.value);
+  let fechaSeleccionada = new Date(fecha.value + "T23:59:59");
 
   if (premio.value === "") {
     mostrarError("Debe ingresar la cantidad del premio");
@@ -77,7 +69,7 @@ function guardar(i) {
     mostrarError("Debe seleccionar una cantidad de boletas");
   } else if (fecha.value === "") {
     mostrarError("Debe ingresar una fecha");
-  } else if (fechaSeleccionada <= fechaActual || fechaSeleccionada < fechaMañana){
+  } else if (fechaSeleccionada < fechaActual){
     mostrarError("Debe ingresar una fecha que sea después del día de hoy");
   } else {
     if (bd === true) {
@@ -435,13 +427,11 @@ function mirarestado() {
   }).then((result) => {
     if (result.isConfirmed) {
       const numeroGanador = parseInt(result.value);
-      // botonBoletas.value[Iestado.value].estado="ganadora"
       console.log("Número ganador:", numeroGanador);
+      botonBoletas.value[numeroGanador].estado="ganadora";
     }
   });
 }
-
-
 
 
 
@@ -472,9 +462,7 @@ function mirarestado() {
         <button id="adquirirb" @click="adquirir()">adquirir boleta</button>
       </div>
 
-      <div class="bolganadora" v-if="showganadora">
-        <p>ESTA ES LA BOLETA GANADORA</p>
-      </div>
+
 
 
       <div class="adquirir" v-if="showadquirir">
@@ -900,6 +888,7 @@ function mirarestado() {
 
   </div>
 </template>
+
 
 <!-- ESTILOS____________________________________________________________________________________________________ -->
 
