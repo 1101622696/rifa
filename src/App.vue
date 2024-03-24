@@ -176,25 +176,79 @@ showBoletapagada.value=false
 }
 
 function adquirir() {
+  nombre.value = "";
+  telefono.value = "";
+  direccion.value = "";
+  pagado.value = "";
+
   showadquirir.value = !showadquirir.value
+  showDisponible.value = !showDisponible.value
 
 }
-
-function listar() {
-  Datospagada.value.push({
-    nombre: nombre.value,
-    direccion: direccion.value,
-    telefono: telefono.value,
-    boleta:Iestado.value
+// function listar() {
+//   Datospagada.value.push({
+//     nombre: nombre.value,
+//     direccion: direccion.value,
+//     telefono: telefono.value,
+//     boleta:Iestado.value
     
-  })
- 
+//   })
 
-  botonBoletas.value[Iestado.value].estado="pagada"
-  console.log(botonBoletas.value[Iestado.value]);
+//   botonBoletas.value[Iestado.value].estado="pagada"
+//   console.log(botonBoletas.value[Iestado.value]);
+  
+// }
+
+function editarinfo(item, i) {
+  showadquirireditado.value = !showadquirireditado.value;
+  showParticipante.value = !showParticipante.value;
+  showBoletapagada.value = !showBoletapagada.value;
+  showBoletanopagada.value = !showBoletanopagada.value;
+
   
 
+  nombre.value = item.nombre;
+  telefono.value = item.telefono;
+  direccion.value = item.direccion;
+
+  index = i; // No necesitas cambiar bd a false aquí
+
+  pagado.value = "";
+
 }
+
+function listar(i) {
+  if (nombre.value === "") {
+    mostrarError("Debe ingresar el nombre");
+  } else if (direccion.value === "") {
+    mostrarError("Debe ingresar su direccion (ej:Cra xx # xx - xx)");
+  } else if (telefono.value.length < 10) {
+    mostrarError("Debe ingresar su telefono con una cantidad de más de 10 digitos");
+  } else {
+    // Si no hay errores, se procede a guardar la información
+    if (bd === true) {
+      mostrarmensaje("Formulario enviado correctamente");
+      // Agregar un nuevo objeto a Datospagada
+      Datospagada.value.push({
+        nombre: nombre.value,
+        direccion: direccion.value,
+        telefono: telefono.value,
+        pagado: pagado.value
+      });
+    } else {
+      // Actualizar el objeto existente en Datospagada
+      Datospagada.value[i].nombre = nombre.value;
+      Datospagada.value[i].direccion = direccion.value;
+      Datospagada.value[i].telefono = telefono.value;
+      Datospagada.value[i].pagado = pagado.value;
+      bd = true;
+    }
+
+    botonBoletas.value[Iestado.value].estado = "pagada";
+    console.log(botonBoletas.value[Iestado.value]);
+  }
+}
+
 function cerrar() {
   showlistadoboletas.value = !showlistadoboletas.value
 }
@@ -1559,6 +1613,24 @@ margin-left: 20%;
 }
 
 
+  .botonedita{
+  width:5vw;
+  height:6vh;
+  /* border:2px solid black; */
+  margin-left:85%;
+  margin-top:-20%;
+
+}
+#editaparticipante{
+  background: linear-gradient(to top right, #5b6594 0%, #6276b6 100%);
+  width:5vw;
+  height:6vh;
+  display: flex;
+  justify-content: center;
+  border:none;
+  outline: none;
+}
+
 }
 
 @media (900px <=width <=1366px) {
@@ -2236,6 +2308,25 @@ margin-left: 20%;
   background-color: rgb(190, 207, 35);
 }
 
+  .botonedita{
+  width:5vw;
+  height:6vh;
+  /* border:2px solid black; */
+  margin-left:85%;
+  margin-top:-20%;
+
+}
+#editaparticipante{
+  background: linear-gradient(to top right, #5b6594 0%, #6276b6 100%);
+  width:5vw;
+  height:6vh;
+  display: flex;
+  justify-content: center;
+  border:none;
+  outline: none;
+}
+
+  
 }
 
 @media (600px <=width <=890px) {
@@ -2628,6 +2719,26 @@ box-shadow: 4px 8px 16px 0 rgba(0, 0, 0, 0.4);
 .yellow{
   background-color: rgb(190, 207, 35);
 }
+
+.botonedita{
+  width:5vw;
+  height:6vh;
+  /* border:2px solid black; */
+  margin-left:85%;
+  margin-top:-20%;
+
+}
+#editaparticipante{
+  background: linear-gradient(to top right, #5b6594 0%, #6276b6 100%);
+  width:5vw;
+  height:6vh;
+  display: flex;
+  justify-content: center;
+  border:none;
+  outline: none;
+}
+
+  
 }
 </style>
 
