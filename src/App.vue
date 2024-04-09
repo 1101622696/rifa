@@ -17,13 +17,14 @@ let showDiv = ref(true);
 let Iestado = ref("");
 let showDisponible = ref(false)
 let showadquirir = ref(false)
+let showadquirireditado = ref(false)
+let showganadora = ref(false)
 let showboletacomprada = ref(false)
 let showParticipante = ref(false)
 let showBoletanopagada = ref(false)
 let showBoletapagada = ref(false)
 let showlistadoboletas = ref(false)
 let showPersonalizar = ref(false)
-// let showtabla = ref(false)
 let Datospagada = ref([])
 let Datosnopagada = ref([])
 let nombre = ref("");
@@ -35,6 +36,7 @@ let selectedColor = ref("")
 let selectedColor1 = ref("")
 let seleccionacolor = ref("")
 let resultados = ref([]);
+let  editarinfoP= false
 
 
 let bd = true;
@@ -59,9 +61,10 @@ function guardar(i) {
   let fechaActual = new Date();
   let fechaSeleccionada = new Date(fecha.value + "T23:59:59");
 
-  if (premio.value === "") {
+
+  if ((!/^\d+$/.test(premio.value) || premio.value.length == "")) {
     mostrarError("Debe ingresar la cantidad del premio");
-  } else if (valorBoleta.value === "") {
+  } else if ((!/^\d+$/.test(valorBoleta.value) || valorBoleta.value.length == "")) {
     mostrarError("Debe ingresar el valor de la boleta");
   } else if (loteria.value === "") {
     mostrarError("Debe ingresar la loteria con la que juega");
@@ -185,74 +188,176 @@ function adquirir() {
   showDisponible.value = !showDisponible.value
 
 }
-// function listar() {
-//   Datospagada.value.push({
-//     nombre: nombre.value,
-//     direccion: direccion.value,
-//     telefono: telefono.value,
-//     boleta:Iestado.value
+function listar() {
+  Datospagada.value.push({
+    nombre: nombre.value,
+    direccion: direccion.value,
+    telefono: telefono.value,
+    boleta:Iestado.value
     
-//   })
+  })
 
-//   botonBoletas.value[Iestado.value].estado="pagada"
-//   console.log(botonBoletas.value[Iestado.value]);
+  botonBoletas.value[Iestado.value].estado="pagada"
+  console.log(botonBoletas.value[Iestado.value]);
   
-// }
-
-function editarinfo(item, i) {
-  showadquirireditado.value = !showadquirireditado.value;
-  showParticipante.value = !showParticipante.value;
-  showBoletapagada.value = !showBoletapagada.value;
-  showBoletanopagada.value = !showBoletanopagada.value;
-
-  
-
-  nombre.value = item.nombre;
-  telefono.value = item.telefono;
-  direccion.value = item.direccion;
-
-  index = i; // No necesitas cambiar bd a false aquí
-
-  pagado.value = "";
-
 }
 
-function listar(i) {
+function editarinfo() {
+  showadquirireditado.value = !showadquirireditado.value;
+  showParticipante.value = false
+  showBoletapagada.value = false
+  showBoletanopagada.value = false
+}
+
+function editarparticipante(){
+
   if (nombre.value === "") {
     mostrarError("Debe ingresar el nombre");
   } else if (direccion.value === "") {
     mostrarError("Debe ingresar su direccion (ej:Cra xx # xx - xx)");
-  } else if (telefono.value.length < 10) {
+  } else if (!/^\d+$/.test(telefono.value) || telefono.value.length < 10) {
     mostrarError("Debe ingresar su telefono con una cantidad de más de 10 digitos");
   } else {
-    // Si no hay errores, se procede a guardar la información
-    if (bd === true) {
-      mostrarmensaje("Formulario enviado correctamente");
-      // Agregar un nuevo objeto a Datospagada
-      Datospagada.value.push({
-        nombre: nombre.value,
-        direccion: direccion.value,
-        telefono: telefono.value,
-        pagado: pagado.value
-      });
-    } else {
-      // Actualizar el objeto existente en Datospagada
-      Datospagada.value[i].nombre = nombre.value;
-      Datospagada.value[i].direccion = direccion.value;
-      Datospagada.value[i].telefono = telefono.value;
-      Datospagada.value[i].pagado = pagado.value;
-      bd = true;
+
+
+    let objetopagado = Datospagada.value.find(objeto => objeto.boleta == Iestado.value);
+
+ let objetonopagado = Datosnopagada.value.find(objeto => objeto.boleta == Iestado.value);
+
+let idTelefono =""
+
+ if(objetopagado !== undefined){
+
+idTelefono = objetopagado.telefono
+
+    Datospagada.value.forEach(objeto => {
+    console.log(objeto);
+    
+    if (objeto.telefono == idTelefono) {
+      objeto.nombre=nombre.value
+ objeto.direccion= direccion.value
+  objeto.telefono=telefono.value
+    }
+});
+
+Datosnopagada.value.forEach(objeto => {
+  console.log(objeto);
+    
+    if (objeto.telefono == idTelefono) {
+      objeto.nombre=nombre.value
+ objeto.direccion= direccion.value
+  objeto.telefono=telefono.value
     }
 
-    botonBoletas.value[Iestado.value].estado = "pagada";
-    console.log(botonBoletas.value[Iestado.value]);
+    
+});
+
+resultados.value.forEach(objeto => {
+  console.log(objeto);
+    
+    if (objeto.telefono == idTelefono) {
+      objeto.nombre=nombre.value
+ objeto.direccion= direccion.value
+  objeto.telefono=telefono.value
+    }
+
+});
+
+objetopagado = undefined
+ }
+
+ else if(objetonopagado !== undefined){
+  idTelefono = objetonopagado.telefono
+    Datospagada.value.forEach(objeto => {
+    console.log(objeto);
+    
+    if (objeto.telefono == idTelefono) {
+      objeto.nombre=nombre.value
+ objeto.direccion= direccion.value
+  objeto.telefono=telefono.value
+    }
+});
+
+Datosnopagada.value.forEach(objeto => {
+  console.log(objeto);
+    
+    if (objeto.telefono == idTelefono) {
+      objeto.nombre=nombre.value
+ objeto.direccion= direccion.value
+  objeto.telefono=telefono.value
+    }
+});
+
+resultados.value.forEach(objeto => {
+  console.log(objeto);
+    
+    if (objeto.telefono == idTelefono) {
+      objeto.nombre=nombre.value
+ objeto.direccion= direccion.value
+  objeto.telefono=telefono.value
+    }
+
+});
+objetonopagado = undefined
+ }
+
+
+ else{}
+
+console.log(resultados.value,"array resultados");
+ 
+showadquirireditado.value = !showadquirireditado.value;
+}
+datosparaimprimir()
+}
+
+
+
+
+function buscarParticipante () {
+  let index = Datosnopagada.value.findIndex(item => item.boleta==Iestado.value);
+if(index!==-1){
+ nombre.value= Datosnopagada.value[index].nombre
+ direccion.value= Datosnopagada.value[index].direccion
+ telefono.value= Datosnopagada.value[index].telefono
+}
+
+let index1 = Datospagada.value.findIndex(item => item.boleta==Iestado.value);
+if(index1!==-1){
+ nombre.value= Datospagada.value[index1].nombre
+ direccion.value= Datospagada.value[index1].direccion
+ telefono.value= Datospagada.value[index1].telefono
+}
+
+
+}
+
+
+function obtener() {
+  if (nombre.value === "") {
+    mostrarError("Debe ingresar el nombre");
+  } else if (direccion.value === "") {
+    mostrarError("Debe ingresar su direccion (ej:Cra xx # xx - xx)");
+  } else if (!/^\d+$/.test(telefono.value) || telefono.value.length < 10) {
+    mostrarError("Debe ingresar su telefono con una cantidad de mas de 10 digitos");
+  } else {
+
+    if (pagado.value == "pagado") {
+    adquirido('boleta adquirida');
+    showadquirir.value = !showadquirir.value
+    listar()
+
+
+  } else if(pagado.value == "reserva"){
+    adquirido('boleta en estado de reserva');
+    showadquirir.value = !showadquirir.value
+      
+    verdatos()
   }
-}
 
-function cerrar() {
-  showlistadoboletas.value = !showlistadoboletas.value
+  }
+  datosparaimprimir()
 }
-
 function verdatos() {
   Datosnopagada.value.push({
     nombre: nombre.value,
@@ -260,28 +365,23 @@ function verdatos() {
     telefono: telefono.value,
     boleta:Iestado.value
   })
-
+  
   botonBoletas.value[Iestado.value].estado="reservada"
-
-  
   console.log(botonBoletas.value);
-  
-  
 }
 
 function listardatosparticipante(){
 
   showlistadoboletas.value = !showlistadoboletas.value
-
-  let resultadodeambosdatos= encontrarCoincidencias(Datospagada.value, Datosnopagada.value);
-
-  if(resultadodeambosdatos.length<=0){}
-
-  else{
-showboletacomprada.value = !showboletacomprada.value
-  }
-  console.log(resultadodeambosdatos);
   
+  let resultadodeambosdatos= encontrarCoincidencias(Datospagada.value, Datosnopagada.value);
+  
+  if(resultadodeambosdatos.length<=0){}
+  
+  else{
+    showboletacomprada.value = !showboletacomprada.value
+  }
+  console.log(resultadodeambosdatos);  
 }
 
 function getColorClass(estado) {
@@ -294,18 +394,22 @@ function getColorClass(estado) {
       }else if (estado === 'ganadora') {
         return 'yellow';
       }
-
+      
     }            
-
-
-function verdatosparticipante(){
-showParticipante.value = !showParticipante.value
-}
-
-
-
-function cerrardatos() {
-  showBoletanopagada.value = !showBoletanopagada.value
+    
+    
+    function verdatosparticipante(){
+      buscarParticipante()
+      showParticipante.value = !showParticipante.value
+    }
+    
+    
+    
+    function cerrar() {
+      showlistadoboletas.value = !showlistadoboletas.value
+    }
+    function cerrardatos() {
+      showBoletanopagada.value = !showBoletanopagada.value
 }
 function cerrardatos1() {
   showlistadoboletas.value = !showlistadoboletas.value
@@ -324,62 +428,21 @@ function cerrardatos5() {
 function cerrardatos6() {
   showadquirir.value = !showadquirir.value
 }
-
-function exportPdf() {
-      const doc = new jsPDF('landscape');
-      let bodyData = [];
-      let tableElement = document.getElementById('tab');
-      let rows = tableElement.querySelectorAll('tr');
-      for (let i = 0; i < rows.length; i++) {
-        let row = rows[i];
-        let cols = row.querySelectorAll('td');
-        let rowData = [];
-        for (let j = 0; j < cols.length; j++) {
-          let col = cols[j];
-          rowData.push(col.innerText);
-        }
-        bodyData.push(rowData);
-      }
-      let headers = ['Nombre','Direcccion','telefono', 'Boletas']
-      autoTable(doc, {
-        head: [headers],
-        body: bodyData,
-      });
-      doc.save('Registro.pdf');
-    }
-
+function cerrardatos7() {
+  showadquirireditado.value = !showadquirireditado.value
+}
 
 
 function personalizar() {
   showPersonalizar.value = !showPersonalizar.value
 }
 
-function obtener() {
-  if (nombre.value === "") {
-    mostrarError("Debe ingresar el nombre");
-  } else if (direccion.value === "") {
-    mostrarError("Debe ingresar su direccion (ej:Cra xx # xx - xx)");
-  } else if (telefono.value.length < 10) {
-    mostrarError("Debe ingresar su telefono con una cantidad de mas de 10 digitos");
-  } else {
-
-    if (pagado.value == "pagado") {
-    adquirido('boleta adquirida');
-    showadquirir.value = !showadquirir.value
-    listar()
 
 
-  } else if(pagado.value == "reserva"){
-    adquirido('boleta en estado de reserva');
-    showadquirir.value = !showadquirir.value
-      
-    verdatos()
-  }
-  }
-}
-
-  
 function liberar() {
+  
+  showBoletanopagada.value = !showBoletanopagada.value
+
   botonBoletas.value[Iestado.value].estado = "disponible";
 
   let index = Datosnopagada.value.findIndex(item => item.boleta==Iestado.value);
@@ -411,11 +474,16 @@ if (indexR !== -1 && indexBoleta !== -1) {
   
 
 function marcar() {
+  resultados=[]
+
+  showBoletanopagada.value = !showBoletanopagada.value
+
   botonBoletas.value[Iestado.value].estado="pagada" 
 }
 
 
 function encontrarCoincidencias(Datospagada, Datosnopagada) {
+
 
     let boletasAdquiridas = Datospagada.concat(Datosnopagada);
 
@@ -439,6 +507,8 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
                 boleta:[item1.boleta]
             });
         }
+
+
     
     console.log(`esto es resultados:${resultados}`);
       });
@@ -446,7 +516,10 @@ function encontrarCoincidencias(Datospagada, Datosnopagada) {
     console.log(`esto es boletasAdquiridas:${boletasAdquiridas}`);
     
     return resultados.value;
+
 }
+
+
 
 
 
@@ -488,8 +561,115 @@ function mirarestado() {
 }
 
 
+let imprimir=[]
+function datosparaimprimir() {
+ 
+  imprimir=[]
+  
+  let boletasAdquiridas = Datospagada.value.concat(Datosnopagada.value);
+  
+  boletasAdquiridas.forEach(function(item1) {
+    let encontrado = imprimir.find(function(item2) {
+      return item1.telefono == item2.telefono;
+    });
+    
+    let buscarestado= botonBoletas.value.find(function(item0){
+      return item0.i == item1.boleta
+    });
+    
+    console.log(buscarestado,);
+    
+    if (encontrado) {
+      
+      let index = imprimir.findIndex(function(item2) {
+        return item1.telefono == item2.telefono;
+      });
+      if (!imprimir[index].boletapagada.includes(item1.boleta) || !imprimir[index].boletanopagada.includes(item1.boleta)) {
+        if (buscarestado.estado == "pagada"){
+
+imprimir[index].boletapagada.push(item1.boleta);
+
+let lengthpagada = imprimir[index].boletapagada.length;
+let totalpagadas = valorBoleta.value * lengthpagada
+console.log(lengthpagada,"totalpagadas");
+imprimir[index].totalpagado=totalpagadas;
+
+}else{
+imprimir[index].boletanopagada.push(item1.boleta);
+
+let lengthnopagada = imprimir[index].boletanopagada.length;
+let totalnopagadas = valorBoleta.value * lengthnopagada
+
+imprimir[index].totaldeuda=totalnopagadas;
+}
 
 
+
+} }
+else {
+
+
+if (buscarestado.estado == "pagada"){
+imprimir.push({
+  nombre: item1.nombre,
+  direccion: item1.direccion,
+  telefono: item1.telefono,
+  boletapagada:[item1.boleta],
+  boletanopagada:[],
+  totalpagado:valorBoleta.value,
+  totaldeuda:""
+  
+});
+
+} else{
+imprimir.push({
+  nombre: item1.nombre,
+  direccion: item1.direccion,
+  telefono: item1.telefono,
+  boletapagada:[],
+  boletanopagada:[item1.boleta],
+  totalpagado:"",
+  totaldeuda:valorBoleta.value
+});
+
+}        
+}
+      console.log(`esto es imprimir:${imprimir}`);
+      console.log(imprimir);
+      
+    });
+    
+    console.log(`esto es boletasAdquiridas:${boletasAdquiridas}`);
+    
+    return imprimir;
+}
+
+
+
+function exportPdf() {
+
+  const doc = new jsPDF('landscape');
+  let bodyData = [];
+  let tableElement = document.getElementById('tab');
+      let rows = tableElement.querySelectorAll('tr');
+      for (let i = 0; i < rows.length; i++) {
+        let row = rows[i];
+        let cols = row.querySelectorAll('td');
+        let rowData = [];
+        for (let j = 0; j < cols.length; j++) {
+          let col = cols[j];
+          rowData.push(col.innerText);
+        }
+        bodyData.push(rowData);
+      }
+      let headers = ['Nombre','Direcccion','telefono', 'boletas pagas', 'Boletas no pagas', 'total pagado', 'deuda']
+
+      autoTable(doc, {
+        head: [headers],
+        body: bodyData,
+      });
+      doc.save('Registro.pdf');
+    }
 
 </script>
 
@@ -515,9 +695,6 @@ function mirarestado() {
         <h5>Estado: {{ botonBoletas[Iestado].estado }} </h5>
         <button id="adquirirb" @click="adquirir()">adquirir boleta</button>
       </div>
-
-
-
 
       <div class="adquirir" v-if="showadquirir">
   
@@ -566,6 +743,48 @@ function mirarestado() {
         </div>
         <button id="botadquirir" @click="obtener()">ADQUIRIR</button>
       </div>
+
+
+      <div class="adquirir" v-if="showadquirireditado">
+  
+  <div class="tituloboladquirir">
+  <h3 id="bol">Boleta a Adquirir: {{ Iestado }}</h3>
+  <div class="equis" >
+    <button id="equis5" @click="cerrardatos7()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.6585 4.92888C18.049 4.53836 18.6822 4.53835 19.0727 4.92888C19.4632 5.3194 19.4632 5.95257 19.0727 6.34309L13.4158 12L19.0727 17.6568C19.4632 18.0473 19.4632 18.6805 19.0727 19.071C18.6822 19.4615 18.049 19.4615 17.6585 19.071L12.0016 13.4142L6.34481 19.071C6.3387 19.0771 6.33254 19.0831 6.32632 19.089C5.93455 19.4614 5.31501 19.4554 4.93059 19.071C4.6377 18.7781 4.56447 18.3487 4.71092 17.9876C4.75973 17.8672 4.83296 17.7544 4.93059 17.6568L10.5874 12L4.93059 6.34314C4.54006 5.95262 4.54006 5.31945 4.93059 4.92893C5.32111 4.5384 5.95428 4.5384 6.3448 4.92893L12.0016 10.5857L17.6585 4.92888Z" fill="white"/>
+</svg>
+</button>
+  </div>
+</div>
+  <div class="nombre"><svg width="30" height="27" viewBox="0 0 24 24" fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7ZM14 7C14 8.10457 13.1046 9 12 9C10.8954 9 10 8.10457 10 7C10 5.89543 10.8954 5 12 5C13.1046 5 14 5.89543 14 7Z"
+        fill="white" />
+      <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M20 17.1666C20 16.7333 19.8642 16.3074 19.5815 15.979C17.7477 13.8488 15.0313 12.5 12 12.5C8.96866 12.5 6.25235 13.8488 4.41847 15.979C4.13576 16.3074 4 16.7333 4 17.1666V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V17.1666ZM18 17.2083C16.5313 15.5445 14.3887 14.5 12 14.5C9.61132 14.5 7.46872 15.5445 6 17.2083V19H18V17.2083ZM6.00017 17.1622C6.00017 17.1622 6.00018 17.1622 6.00017 17.1623C6.00016 17.1624 6.00015 17.1625 6.00012 17.1627C6.00014 17.1625 6.00016 17.1623 6.00017 17.1622Z"
+        fill="white" />
+    </svg>
+    <input id="input" type="text" placeholder="Nombre" v-model.trim="nombre" />
+  </div>
+  <div class="telefono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M21.0047 21.342C21.6329 20.8043 21.9962 20.02 22 19.1931V16.1795C22 15.3021 21.4281 14.5272 20.5898 14.2685L17.1131 13.1956C16.4856 13.002 15.8031 13.1287 15.2869 13.5346L13.8995 14.6258C13.0354 14.0205 12.2118 13.3319 11.4399 12.5601C10.6681 11.7882 9.97951 10.9646 9.37419 10.1005L10.4654 8.71309C10.8713 8.19694 10.998 7.5144 10.8044 6.88693L9.73153 3.41025C9.47281 2.57186 8.69786 2 7.82046 2H4.8069C3.98001 2.00381 3.19565 2.3671 2.65797 2.99532C2.21357 3.51456 1.96206 4.17697 2.00467 4.85909C2.27326 9.15824 4.04992 13.3803 7.33479 16.6652C10.6197 19.9501 14.8418 21.7267 19.1409 21.9953C19.823 22.0379 20.4854 21.7864 21.0047 21.342ZM7.80217 8.86404C7.257 9.55719 7.23015 10.5256 7.73607 11.2479C8.40782 12.2069 9.17126 13.1198 10.0257 13.9743C10.8802 14.8287 11.7931 15.5922 12.7521 16.2639C13.4744 16.7698 14.4428 16.743 15.136 16.1978L16.5233 15.1067L20 16.1795V19.1872C19.9979 19.4317 19.8901 19.6635 19.7042 19.8226C19.5325 19.9695 19.3695 20.0057 19.2656 19.9992C15.434 19.7598 11.6762 18.1782 8.749 15.251C5.82181 12.3238 4.24016 8.56596 4.00078 4.73438C3.99429 4.63048 4.03046 4.46752 4.17743 4.2958C4.33653 4.10991 4.5683 4.00206 4.81287 4H7.82046L8.89334 7.47667L7.80217 8.86404Z"
+        fill="white" />
+    </svg>
+    <input id="input" type="text" placeholder="Telefono" v-model.trim="telefono" />
+  </div>
+  <div class="direccion"><svg width="28" height="25" viewBox="0 0 24 24" fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M3 11.8284C3 11.2979 3.21071 10.7892 3.58579 10.4142L10.5858 3.41416C11.3668 2.63311 12.6332 2.63311 13.4142 3.41416L20.4142 10.4142C20.7893 10.7892 21 11.2979 21 11.8284V20C21 20.5522 20.5523 21 20 21H14C13.4477 21 13 20.5522 13 20V15H11V20C11 20.5522 10.5523 21 10 21H4C3.44772 21 3 20.5522 3 20V11.8284ZM12 4.82837L5 11.8284V19H9V13.9999C9 13.4477 9.44772 12.9999 10 12.9999H14C14.5523 12.9999 15 13.4477 15 13.9999V19H19V11.8284L12 4.82837Z"
+        fill="white" />
+    </svg>
+    <input id="input" type="text" placeholder="Direccion" v-model.trim="direccion" />
+  </div>
+  <button id="botadquirir" @click="editarparticipante()">EDITAR</button>
+</div>
 
       <div class="participante" v-if="showParticipante">
         <div class="tituloparticipante">
@@ -621,6 +840,17 @@ function mirarestado() {
               </svg>
               {{ botonBoletas[Iestado].estado  }}</p>
           </div>
+        </div>
+        <div class="botonedita">
+          <button id="editaparticipante" @click="editarinfo(item, i)"><svg width="24" height="24" viewBox="0 0 24 24"
+                fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M7.58579 11.9142C7.21071 12.2892 7 12.7979 7 13.3284V16C7 16.5522 7.44772 17 8 17H10.6716C11.202 17 11.7107 16.7892 12.0858 16.4142L21.5858 6.91416C22.3668 6.13311 22.3668 4.86678 21.5858 4.08573L19.9142 2.41416C19.1332 1.63311 17.8668 1.63311 17.0858 2.41416L7.58579 11.9142ZM10.6716 15H9L9 13.3284L18.5 3.82837L20.1716 5.49995L10.6716 15Z"
+                  fill="black" />
+                <path
+                  d="M10 3.99994C10 4.55223 9.55229 4.99995 9 4.99995H4L4 20H19V15C19 14.4477 19.4477 14 20 14C20.5523 14 21 14.4477 21 15V20C21 21.1045 20.1046 22 19 22H4C2.89543 22 2 21.1045 2 20V4.99995C2 3.89538 2.89543 2.99994 4 2.99994H9C9.55229 2.99994 10 3.44766 10 3.99994Z"
+                  fill="black" />
+              </svg></button>
         </div>
       </div>
 
@@ -715,7 +945,7 @@ function mirarestado() {
               <div class="texto-direccion">{{ item1.direccion }}</div>
             </div>
             <div class="datop">
-              <div class="texto-nombre">Boletas</div>
+              <div class="texto-nombre">Boletas Num</div>
               <div class="texto-09-10">{{ item1.boleta.join(', ') }}</div>
             </div>
           </div>
@@ -760,10 +990,10 @@ function mirarestado() {
           </div>
           <div class="informacion" style="color:black">
             <div class="premio">
-              <h3>🏆 {{ premio }} </h3>
+              <h3>🏆 {{ premio.toLocaleString('es-ES', { style: 'currency', currency: 'COP' }) }} </h3>
             </div>
             <div class="precioVoleta">
-              <h3>💲{{valorBoleta }}</h3>
+              <h3>💲{{ valorBoleta.toLocaleString('es-ES', { style: 'currency', currency: 'COP' }) }}</h3>
             </div>
             <div class="loteria">
               <h3>🏦{{ loteria }}</h3>
@@ -868,26 +1098,6 @@ function mirarestado() {
       </div>
 
 
-<!-- <div class="impresion" v-if="showtabla"> -->
-<!-- <div class="impresion">
-
-<h3 id="titulopdf"> talonario </h3>
-
-<div class="intro">
-<div class="sorteo">
-  <p>fecha del sorteo:</p>
-  <p>{{ fecha }}</p>
-  <p>loteria</p>
-  <p>{{ loteria }}</p>
-</div>
-<div class="sorteo">
-  <p>Ganador:</p>
-  <p>?</p>
-  <p>Premio:</p>
-  <p>{{ premio }}</p>
-</div>
-</div> -->
-
 <div class="tablapdf" v-show="talonario" >
     <table id='tab'>
       <thead>
@@ -895,45 +1105,28 @@ function mirarestado() {
           <th>Nombre</th>
           <th>Telefono</th>
           <th>Direccion</th>
-          <th>Boletas</th>
-
-          <!-- <th>Boletas pagas</th>
+          <th>Boletas pagas</th>
           <th>Boletas no pagas</th>
           <th>Total pagado</th>
-          <th>Deuda</th> -->
+          <th>Deuda</th>
+
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item1, i) in resultados" :key="i" >
+        <tr v-for="(item1, i) in imprimir" :key="i" >
           <td>{{ item1.nombre }}</td>
           <td>{{ item1.telefono }}</td>
           <td>{{ item1.direccion }}</td>
-          <td>{{ item1.boleta.join(', ') }}</td>
-          <!-- <td>{{ item.bol_paga }}</td>
-          <td>{{ item.bol_no_paga }}</td>
-          <td>{{ item.total_pagado }}</td>
-          <td>{{ item.deuda }}</td> -->
+          <td>{{ item1.boletapagada.join(', ') }}</td>
+          <td>{{ item1.boletanopagada.join(', ') }}</td>
+          <td>{{ item1.totalpagado.toLocaleString('es-CO', { style: 'currency', currency: 'COP' }) }}</td>
+          <td>{{ item1.totaldeuda.toLocaleString('es-CO', { style: 'currency', currency: 'COP' }) }}</td>
         </tr>
 
       </tbody>
 
     </table> 
     </div>
-
-<!-- <div class="intro">
-<div class="sorteo">
-  <p>Saldo recaudado:</p>
-  <p>{{ saldo_recaudado }}</p>
-
-</div>
-<div class="sorteo">
-  <p>Saldo pendiente:</p>
-  <p>{{ saldo_pendiente }}</p>
-</div>
-</div>
-
-
-</div> -->
 
 
     </div>
@@ -942,7 +1135,6 @@ function mirarestado() {
 
   </div>
 </template>
-
 
 <!-- ESTILOS____________________________________________________________________________________________________ -->
 
@@ -1282,10 +1474,13 @@ align-items: center;
   outline:none
 }
 
-  #adquirirb {
+#adquirirb {
     width: 8vw;
     height: 8vh;
-    background-color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform:uppercase;
+    background-color: #06565c;
   }
 
   #input{
@@ -1611,9 +1806,7 @@ margin-left: 20%;
 .yellow{
   background-color: rgb(190, 207, 35);
 }
-
-
-  .botonedita{
+.botonedita{
   width:5vw;
   height:6vh;
   /* border:2px solid black; */
@@ -1951,8 +2144,11 @@ align-items: center;
  } 
   #adquirirb {
     width: 8vw;
-    height: 10vh;
-    background-color: #333;
+    height: 8vh;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform:uppercase;
+    background-color: #06565c;
   }
 
   #input{
@@ -1992,7 +2188,8 @@ justify-content: center;
     top: 50%;
     left: 50%;
     width: 500px;
-    height: 250px;
+    height: 260px;
+    box-sizing: border-box;
     margin-top: -200px;
     margin-left: -250px;
     background: linear-gradient(to top right, #5b6594 0%, #6276b6 100%);
@@ -2308,7 +2505,7 @@ margin-left: 20%;
   background-color: rgb(190, 207, 35);
 }
 
-  .botonedita{
+.botonedita{
   width:5vw;
   height:6vh;
   /* border:2px solid black; */
@@ -2326,7 +2523,8 @@ margin-left: 20%;
   outline: none;
 }
 
-  
+
+
 }
 
 @media (600px <=width <=890px) {
@@ -2593,7 +2791,10 @@ align-items: center;
   #adquirirb {
     width: 8vw;
     height: 8vh;
-    background-color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform:uppercase;
+    background-color: #06565c;
   }
 
   #input{
@@ -2719,7 +2920,6 @@ box-shadow: 4px 8px 16px 0 rgba(0, 0, 0, 0.4);
 .yellow{
   background-color: rgb(190, 207, 35);
 }
-
 .botonedita{
   width:5vw;
   height:6vh;
@@ -2737,8 +2937,6 @@ box-shadow: 4px 8px 16px 0 rgba(0, 0, 0, 0.4);
   border:none;
   outline: none;
 }
-
-  
 }
 </style>
 
